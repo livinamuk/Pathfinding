@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{3b38f3dc-1fc6-48cf-a461-604d003618c2}</ProjectGuid>
+    <RootNamespace>Pathfinding</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Pathfinding</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)\$(ProjectName)\Build\Debug\</OutDir>
+    <IntDir>$(SolutionDir)\$(ProjectName)\Build\Intermediate\Debug\</IntDir>
+    <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
+    <TargetName>Unloved</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)\$(ProjectName)\Build\Release\</OutDir>
+    <IntDir>$(SolutionDir)\$(ProjectName)\Build\Intermediate\Release\</IntDir>
+    <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
+    <TargetName>Pathfinding</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>vendor\nlohmann_json\include;vendor\lz4\include;vendor\VulkanMemoryAllocator\include;vendor\VulkanSDK\1.3.250.0\Include;vendor\tinyexr;vendor\compressonator\include;vendor\tracy\public;vendor\tinyobj;vendor\GLFW\include;vendor\glm;vendor\glad\include;vendor\stb_image;vendor\fmod\include;vendor\assimp\include;vendor\rapidjson\include;vendor\physx\include;vendor\thread_pool\include;vendor\VkBootstrap</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>vendor\GLFW\lib\Release;vendor\fmod\lib;vendor\physx\lib\Debug;vendor\assimp\lib;vendor\compressonator\lib;vendor\DDS;vendor\Vulkan;vendor\lz4\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(ProjectDir)vendor\dll\fmod.dll" "$(TargetDir)fmod.dll"
+copy /Y "$(ProjectDir)vendor\dll\assimp-vc142-mt.dll" "$(TargetDir)assimp-vc142-mt.dll"
+copy /Y "$(ProjectDir)vendor\dll\fmod.dll" "$(TargetDir)fmod.dll"
+copy /Y "$(ProjectDir)vendor\dll\Compressonator_MD_DLL.dll" "$(TargetDir)Compressonator_MD_DLL.dll"
+xcopy "$(ProjectDir)res\shaders" "$(TargetDir)res\shaders" /e /y /i /r
+
+copy /Y "$(ProjectDir)vendor\dll_debug\PhysX_64.dll" "$(TargetDir)PhysX_64.dll"
+copy /Y "$(ProjectDir)vendor\dll_debug\PhysXCommon_64.dll" "$(TargetDir)PhysXCommon_64.dll"
+copy /Y "$(ProjectDir)vendor\dll_debug\PhysXCooking_64.dll" "$(TargetDir)PhysXCooking_64.dll"
+copy /Y "$(ProjectDir)vendor\dll_debug\PhysXFoundation_64.dll" "$(TargetDir)PhysXFoundation_64.dll"
+copy /Y "$(ProjectDir)vendor\dll_debug\PVDRuntime_64.dll" "$(TargetDir)PVDRuntime_64.dll"
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;TRACY_ENABLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>vendor\nlohmann_json\include;vendor\lz4\include;vendor\VkBootstrap;vendor\VulkanMemoryAllocator\include;vendor\VulkanSDK\1.3.250.0\Include;vendor\tinyexr;vendor\compressonator\include;vendor\tracy\public;vendor\tinyobj;vendor\GLFW\include;vendor\glm;vendor\glad\include;vendor\stb_image;vendor\fmod\include;vendor\assimp\include;vendor\rapidjson\include;vendor\physx\include;vendor\thread_pool\include</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>MaxSpeed</Optimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <OptimizeReferences>false</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>vendor\compressonator\lib;vendor\GLFW\lib\Release;vendor\fmod\lib;vendor\assimp\lib;vendor\physx\lib\Release;vendor\DDS;vendor\lz4\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(ProjectDir)vendor\dll\fmod.dll" "$(TargetDir)fmod.dll"
+copy /Y "$(ProjectDir)vendor\dll\assimp-vc143-mt.dll" "$(TargetDir)assimp-vc143-mt.dll"
+copy /Y "$(ProjectDir)vendor\dll\fmod.dll" "$(TargetDir)fmod.dll"
+copy /Y "$(ProjectDir)vendor\dll\Compressonator_MD_DLL.dll" "$(TargetDir)Compressonator_MD_DLL.dll"
+xcopy "$(ProjectDir)res\shaders" "$(TargetDir)res\shaders" /e /y /i /r
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\API\OpenGL\Types\GL_texture.cpp" />
+    <ClCompile Include="src\Core\AssetManager.cpp" />
+    <ClCompile Include="src\Core\Pathfinding.cpp" />
+    <ClCompile Include="src\Renderer\Types\Texture.cpp" />
+    <ClCompile Include="src\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Core\Game.cpp" />
+    <ClCompile Include="src\Core\Game.h" />
+    <ClCompile Include="src\BackEnd\BackEnd.cpp" />
+    <ClCompile Include="src\API\OpenGL\GL_backEnd.cpp" />
+    <ClCompile Include="src\Core\Input.cpp" />
+    <ClCompile Include="src\Renderer\TextBlitting.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\API\OpenGL\Types\GL_gBuffer.cpp" />
+    <ClCompile Include="src\API\OpenGL\GL_renderer.cpp" />
+    <ClCompile Include="src\API\OpenGL\Types\GL_shader.cpp" />
+    <ClCompile Include="vendor\glad\src\glad.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\API\OpenGL\Types\GL_detachedMesh.hpp" />
+    <ClInclude Include="src\API\OpenGL\Types\GL_texture.h" />
+    <ClInclude Include="src\API\OpenGL\Types\GL_vertexBuffer.hpp" />
+    <ClInclude Include="src\Core\JSON.hpp" />
+    <ClInclude Include="src\Core\Pathfinding.h" />
+    <ClInclude Include="src\ErrorChecking.h" />
+    <ClInclude Include="src\Core\AssetManager.h" />
+    <ClInclude Include="src\Common.h" />
+    <ClInclude Include="src\Renderer\PointCloud.h" />
+    <ClInclude Include="src\Renderer\RenderData.h" />
+    <ClInclude Include="src\Renderer\RendererUtil.hpp" />
+    <ClInclude Include="src\Renderer\Types\DetachedMesh.hpp" />
+    <ClInclude Include="src\Renderer\Types\Mesh.hpp" />
+    <ClInclude Include="src\Renderer\Types\Model.hpp" />
+    <ClInclude Include="src\Renderer\Types\Texture.h" />
+    <ClInclude Include="src\Types\SkinnedMesh.hpp" />
+    <ClInclude Include="src\API\OpenGL\GL_assetManager.h" />
+    <ClInclude Include="src\Core\Audio.hpp" />
+    <ClInclude Include="src\Types\ExrTexture.h" />
+    <ClInclude Include="src\Renderer\Renderer.h" />
+    <ClInclude Include="src\Types\Modular\Class.h" />
+    <ClInclude Include="src\API\OpenGL\GL_backEnd.h" />
+    <ClInclude Include="src\Core\Input.h" />
+    <ClInclude Include="src\Core\keycodes.h" />
+    <ClInclude Include="src\Renderer\TextBlitter.h" />
+    <ClInclude Include="src\Engine.h" />
+    <ClInclude Include="src\Math.h" />
+    <ClInclude Include="src\API\OpenGL\Types\GL_gBuffer.h" />
+    <ClInclude Include="src\API\OpenGL\GL_renderer.h" />
+    <ClInclude Include="src\API\OpenGL\Types\GL_frameBuffer.hpp" />
+    <ClInclude Include="src\BackEnd\BackEnd.h" />
+    <ClInclude Include="src\Renderer\RendererCommon.h" />
+    <ClInclude Include="src\API\OpenGL\Types\GL_shader.h" />
+    <ClInclude Include="src\Types\Texture.h" />
+    <ClInclude Include="src\Threading.h" />
+    <ClInclude Include="src\Timer.hpp" />
+    <ClInclude Include="src\Types\Mesh.hpp" />
+    <ClInclude Include="src\Types\Model.hpp" />
+    <ClInclude Include="src\Util.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\adl_serializer.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\byte_container_with_subtype.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\abi_macros.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\conversions\from_json.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\conversions\to_chars.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\conversions\to_json.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\exceptions.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\hash.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\input\binary_reader.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\input\input_adapters.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\input\json_sax.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\input\lexer.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\input\parser.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\input\position_t.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\iterators\internal_iterator.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\iterators\iteration_proxy.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\iterators\iterator_traits.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\iterators\iter_impl.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\iterators\json_reverse_iterator.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\iterators\primitive_iterator.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\json_custom_base_class.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\json_pointer.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\json_ref.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\macro_scope.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\macro_unscope.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\meta\call_std\begin.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\meta\call_std\end.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\meta\cpp_future.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\meta\detected.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\meta\identity_tag.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\meta\is_sax.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\meta\std_fs.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\meta\type_traits.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\meta\void_t.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\output\binary_writer.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\output\output_adapters.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\output\serializer.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\string_concat.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\string_escape.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\detail\value_t.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\json.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\json_fwd.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\ordered_map.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\thirdparty\hedley\hedley.hpp" />
+    <ClInclude Include="vendor\nlohmann_json\include\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shaders\OpenGL\GL_bloodDecals.frag" />
+    <None Include="res\shaders\OpenGL\GL_bloodDecals.vert" />
+    <None Include="res\shaders\OpenGL\GL_bloodVAT.frag" />
+    <None Include="res\shaders\OpenGL\GL_bloodVAT.vert" />
+    <None Include="res\shaders\OpenGL\GL_bloom.comp" />
+    <None Include="res\shaders\OpenGL\GL_blur.frag" />
+    <None Include="res\shaders\OpenGL\GL_blurHorizontal.vert" />
+    <None Include="res\shaders\OpenGL\GL_blurVertical.vert" />
+    <None Include="res\shaders\OpenGL\GL_decals.frag" />
+    <None Include="res\shaders\OpenGL\GL_decals.vert" />
+    <None Include="res\shaders\OpenGL\GL_emissiveComposite.comp" />
+    <None Include="res\shaders\OpenGL\GL_flipBook.frag" />
+    <None Include="res\shaders\OpenGL\GL_flipBook.vert" />
+    <None Include="res\shaders\OpenGL\GL_debug.frag" />
+    <None Include="res\shaders\OpenGL\GL_debug.vert" />
+    <None Include="res\shaders\OpenGL\GL_gbufferSkinned.frag" />
+    <None Include="res\shaders\OpenGL\GL_gbufferSkinned.vert" />
+    <None Include="res\shaders\OpenGL\GL_glass.frag" />
+    <None Include="res\shaders\OpenGL\GL_glass.vert" />
+    <None Include="res\shaders\OpenGL\GL_glassComposite.comp" />
+    <None Include="res\shaders\OpenGL\GL_lighting.frag" />
+    <None Include="res\shaders\OpenGL\GL_lighting.vert" />
+    <None Include="res\shaders\OpenGL\GL_postProcessing.comp" />
+    <None Include="res\shaders\OpenGL\GL_sandbox.comp" />
+    <None Include="res\shaders\OpenGL\GL_shadowMap.frag" />
+    <None Include="res\shaders\OpenGL\GL_shadowMap.geom" />
+    <None Include="res\shaders\OpenGL\GL_shadowMap.vert" />
+    <None Include="res\shaders\blood_volumetric.geom" />
+    <None Include="res\shaders\OpenGL\GL_gbuffer.frag" />
+    <None Include="res\shaders\OpenGL\GL_gbuffer.vert" />
+    <None Include="res\shaders\OpenGL\GL_ui.frag" />
+    <None Include="res\shaders\OpenGL\GL_ui.vert" />
+    <None Include="res\shaders\Vulkan\VK_debug.frag" />
+    <None Include="res\shaders\Vulkan\VK_debug.vert" />
+    <None Include="res\vulkan_shaders\closesthit.rchit" />
+    <None Include="res\vulkan_shaders\miss.rmiss" />
+    <None Include="res\vulkan_shaders\raygen.rgen" />
+    <None Include="res\vulkan_shaders\shadow.rmiss" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
