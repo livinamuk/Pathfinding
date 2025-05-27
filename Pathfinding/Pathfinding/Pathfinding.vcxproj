@@ -130,7 +130,10 @@ xcopy "$(ProjectDir)res\shaders" "$(TargetDir)res\shaders" /e /y /i /r
   <ItemGroup>
     <ClCompile Include="src\API\OpenGL\Types\GL_texture.cpp" />
     <ClCompile Include="src\Core\AssetManager.cpp" />
-    <ClCompile Include="src\Core\Pathfinding.cpp" />
+    <ClCompile Include="src\Pathfinding\AStar.cpp" />
+    <ClCompile Include="src\Pathfinding\Cell.cpp" />
+    <ClCompile Include="src\Pathfinding\MinHeap.cpp" />
+    <ClCompile Include="src\Pathfinding\Pathfinding.cpp" />
     <ClCompile Include="src\Renderer\Types\Texture.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Core\Game.cpp" />
@@ -150,8 +153,11 @@ xcopy "$(ProjectDir)res\shaders" "$(TargetDir)res\shaders" /e /y /i /r
     <ClInclude Include="src\API\OpenGL\Types\GL_detachedMesh.hpp" />
     <ClInclude Include="src\API\OpenGL\Types\GL_texture.h" />
     <ClInclude Include="src\API\OpenGL\Types\GL_vertexBuffer.hpp" />
+    <ClInclude Include="src\Pathfinding\AStar.h" />
     <ClInclude Include="src\Core\JSON.hpp" />
-    <ClInclude Include="src\Core\Pathfinding.h" />
+    <ClInclude Include="src\Pathfinding\Cell.h" />
+    <ClInclude Include="src\Pathfinding\MinHeap.h" />
+    <ClInclude Include="src\Pathfinding\Pathfinding.h" />
     <ClInclude Include="src\ErrorChecking.h" />
     <ClInclude Include="src\Core\AssetManager.h" />
     <ClInclude Include="src\Common.h" />

@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "../BackEnd/BackEnd.h"
 #include "../Core/Audio.hpp"
-#include "../Core/Pathfinding.h"
+#include "../Pathfinding/Pathfinding.h"
 #include "../Renderer/Renderer.h"
 
 namespace Game {

@@ -9,13 +9,17 @@ layout (location = 2) in flat float colorTintR;
 layout (location = 3) in flat float colorTintG;
 layout (location = 4) in flat float colorTintB;
 
-readonly restrict layout(std430, binding = 0) buffer textureSamplerers { 
-	uvec2 textureSamplers[]; 
+readonly restrict layout(std430, binding = 0) buffer textureSamplerers {
+	uvec2 textureSamplers[];
 };
 
 void main() {
 
-	vec4 textureColor = texture(sampler2D(textureSamplers[textureIndex]), texCoord);    
+	vec4 textureColor = texture(sampler2D(textureSamplers[textureIndex]), texCoord);
+
+	if (textureColor.a < 0.9) {
+	//discard;
+	}
     FragColor = vec4(textureColor);
 	FragColor.rgb *= vec3(colorTintR, colorTintG, colorTintB);
 }

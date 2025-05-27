@@ -5,7 +5,8 @@
 #include "../BackEnd/BackEnd.h"
 #include "../Core/Game.h"
 #include "../Core/Input.h"
-#include "../Core/Pathfinding.h"
+#include "../Pathfinding/Pathfinding.h"
+#include "../Pathfinding/AStar.h"
 #include "../Renderer/RenderData.h"
 #include "../Renderer/TextBlitter.h"
 #include "../Renderer/RendererUtil.hpp"
@@ -97,11 +98,23 @@ std::vector<RenderItem2D> CreateRenderItems2D(ivec2 presentSize) {
 
     AStar aStar = Pathfinding::GetAStar();
 
-    for (auto& cell : aStar.GetClosedList()) {
-        renderItems.push_back(CreateColoredTile(cell->x, cell->y, RED));
+    // Render closed cells
+    const std::vector<bool>& closedFlags = aStar.GetClosedFlags();
+    for (int i = 0; i < closedFlags.size(); i++) {
+        if (closedFlags[i]) {
+            int x = i % Pathfinding::GetMapWidth();
+            int y = i / Pathfinding::GetMapWidth();
+            renderItems.push_back(CreateColoredTile(x, y, RED));
+        }
     }
-
-    for (int i = 0; i < aStar.GetOpenList().Size(); i++) {
+    MinHeap& openList = aStar.GetOpenList();
+    for (Cell* cell : openList.items) {
+        //renderItems.push_back(CreateColoredTile(cell->x, cell->y, GREEN));
+    }
+    //for (int i = 0; i < aStar.GetOpenList().Size(); i++) {
+    //    std::cout << 
+    //}
+    for (int i = 0; i < aStar.GetOpenList().GetItemCount(); i++) {
         auto& cell = aStar.GetOpenList().items[i];
         renderItems.push_back(CreateColoredTile(cell->x, cell->y, GREEN));
     }

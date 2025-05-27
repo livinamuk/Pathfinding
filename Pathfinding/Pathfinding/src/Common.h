@@ -155,80 +155,12 @@ struct Transform {
     };
 };
 
-struct Point {
-    glm::vec3 pos = { glm::vec3(0) };
-    glm::vec3 color = { glm::vec3(0) };
-    Point() {};
-    Point(glm::vec3 pos, glm::vec3 color) {
-        this->pos = pos;
-        this->color = color;
-    }
-    Point(float x, float y, float z, glm::vec3 color) {
-        this->pos = glm::vec3(x, y, z);
-        this->color = color;
-    }
-};
-
-struct Line {
-    Point p1;
-    Point p2;
-    Line() {};
-    Line(glm::vec3 start, glm::vec3 end, glm::vec3 color) {
-        p1.pos = start;
-        p2.pos = end;
-        p1.color = color;
-        p2.color = color;
-    }
-};
-
-/*struct Triangle {
-    glm::vec3 p1 = glm::vec3(0);
-    glm::vec3 p2 = glm::vec3(0);
-    glm::vec3 p3 = glm::vec3(0);
-    glm::vec3 normal = glm::vec3(0);
-    glm::vec3 color = glm::vec3(0);
-};*/
-
 struct IntersectionResult {
     bool found = false;
     float distance = 0;
     float dot = 0;
     glm::vec2 baryPosition = glm::vec2(0);
 };
-
-struct GridProbe {
-    glm::vec3 color = BLACK;
-    //int samplesRecieved = 0;
-    bool ignore = true; // either blocked by geometry, or out of map range
-};
-
-struct RenderItem2DB {
-    std::string textureName;
-    int screenX = 0;
-    int screenY = 0;
-    glm::mat4 modelMatrix = glm::mat4(1);
-    glm::vec3 color = WHITE;
-    bool centered = false;
-    GLuint target = GL_TEXTURE_2D;
-    void* parent = nullptr;
-};
-
-
-
-struct UIRenderInfo {
-    std::string textureName;
-    int screenX = 0;
-    int screenY = 0;
-    glm::mat4 modelMatrix = glm::mat4(1);
-    glm::vec3 color = WHITE;
-    bool centered = false;
-    GLuint target = GL_TEXTURE_2D;
-    void* parent = nullptr;
-};
-
-//enum class RigidStaticType { NONE, FLOOR, WALLS, ENEMY, DOOR };
-
-
 
 struct FileInfo {
     std::string fullpath;
