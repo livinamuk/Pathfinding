@@ -9,21 +9,21 @@
 
 namespace BackEnd {
 
-    API _api = API::UNDEFINED;
-    GLFWwindow* _window = NULL;
-    WindowedMode _windowedMode = WindowedMode::WINDOWED;
-    GLFWmonitor* _monitor;
-    const GLFWvidmode* _mode;
-    bool _forceCloseWindow = false;
-    bool _windowHasFocus = true;
-    int _windowedWidth = 0;
-    int _windowedHeight = 0;
-    int _fullscreenWidth = 0;
-    int _fullscreenHeight = 0;
-    int _currentWindowWidth = 0;
-    int _currentWindowHeight = 0;
-    int _presentTargetWidth = 0;
-    int _presentTargetHeight = 0;
+    API g_api = API::UNDEFINED;
+    GLFWwindow* g_window = NULL;
+    WindowedMode g_windowedMode = WindowedMode::WINDOWED;
+    GLFWmonitor* g_monitor;
+    const GLFWvidmode* g_mode;
+    bool g_forceCloseWindow = false;
+    bool g_windowHasFocus = true;
+    int g_windowedWidth = 0;
+    int g_windowedHeight = 0;
+    int g_fullscreenWidth = 0;
+    int g_fullscreenHeight = 0;
+    int g_currentWindowWidth = 0;
+    int g_currentWindowHeight = 0;
+    int g_presentTargetWidth = 0;
+    int g_presentTargetHeight = 0;
 
     void framebuffer_size_callback(GLFWwindow* window, int width, int height);
     void window_focus_callback(GLFWwindow* window, int focused);
@@ -33,16 +33,13 @@ namespace BackEnd {
     //                //
     //      Core      //
 
-    void Init(API api) {
+    void Init(API api, WindowedMode windowedMode) {
 
-        _api = api;
+        g_api = api;
 
         if (GetAPI() == API::OPENGL) {
             // Nothing required
         }
-
-        int width = 1920 * 1.5f;
-        int height = 1080 * 1.5f;
 
         glfwInit();
         glfwSetErrorCallback([](int error, const char* description) { std::cout << "GLFW Error (" << std::to_string(error) << "): " << description << "\n";});
@@ -61,29 +58,48 @@ namespace BackEnd {
         glfwWindowHint(GLFW_FOCUS_ON_SHOW, GLFW_TRUE);
 
         // Resolution and window size
-        _monitor = glfwGetPrimaryMonitor();
-        _mode = glfwGetVideoMode(_monitor);
-        glfwWindowHint(GLFW_RED_BITS, _mode->redBits);
-        glfwWindowHint(GLFW_GREEN_BITS, _mode->greenBits);
-        glfwWindowHint(GLFW_BLUE_BITS, _mode->blueBits);
-        glfwWindowHint(GLFW_REFRESH_RATE, _mode->refreshRate);
-        _fullscreenWidth = _mode->width;
-        _fullscreenHeight = _mode->height;
-        _windowedWidth = width;
-        _windowedHeight = height;
-        CreateGLFWWindow(WindowedMode::WINDOWED);
-        if (_window == NULL) {
+        g_monitor = glfwGetPrimaryMonitor();
+        g_mode = glfwGetVideoMode(g_monitor);
+
+        glfwWindowHint(GLFW_RED_BITS, g_mode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, g_mode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, g_mode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, g_mode->refreshRate); 
+        
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+
+        g_fullscreenWidth = g_mode->width;
+        g_fullscreenHeight = g_mode->height;
+        g_windowedWidth = g_fullscreenWidth * 0.75f;
+        g_windowedHeight = g_fullscreenHeight * 0.75f;
+
+        // Create window
+        g_windowedMode = windowedMode;
+        if (g_windowedMode == WindowedMode::WINDOWED) {
+            g_currentWindowWidth = g_windowedWidth;
+            g_currentWindowHeight = g_windowedHeight;
+            g_window = glfwCreateWindow(g_windowedWidth, g_windowedHeight, "Unloved", NULL, NULL);
+            glfwSetWindowPos(g_window, 0, 0);
+        }
+        else if (windowedMode == WindowedMode::FULLSCREEN) {
+            g_currentWindowWidth = g_fullscreenWidth;
+            g_currentWindowHeight = g_fullscreenHeight;
+            g_window = glfwCreateWindow(g_fullscreenWidth, g_fullscreenHeight, "Unloved", g_monitor, NULL);
+        }
+
+        if (g_window == NULL) {
             std::cout << "Failed to create GLFW window\n";
             glfwTerminate();
             return;
         }
-        glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
-        glfwSetWindowFocusCallback(_window, window_focus_callback);
+
+        glfwSetFramebufferSizeCallback(g_window, framebuffer_size_callback);
+        glfwSetWindowFocusCallback(g_window, window_focus_callback);
 
         AssetManager::FindAssetPaths();
 
         if (GetAPI() == API::OPENGL) {
-            glfwMakeContextCurrent(_window);
+            glfwMakeContextCurrent(g_window);
             OpenGLBackEnd::InitMinimum();
             OpenGLRenderer::InitMinimum();
             glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
@@ -102,10 +118,13 @@ namespace BackEnd {
     }
 
     void EndFrame() {
+        if (!g_window) {
+            std::cout << "BackEnd::EndFrame(): g_window was nullptr\n";
+        }
 
         // OpenGL
         if (GetAPI() == API::OPENGL) {
-            glfwSwapBuffers(_window);
+            glfwSwapBuffers(g_window);
         }
         // Vulkan
         else if (GetAPI() == API::VULKAN){
@@ -119,6 +138,11 @@ namespace BackEnd {
     }
 
     void CleanUp() {
+        if (g_window) {
+            glfwMakeContextCurrent(nullptr);
+            glfwDestroyWindow(g_window);
+            g_window = nullptr;
+        }
         glfwTerminate();
     }
 
@@ -127,54 +151,39 @@ namespace BackEnd {
     //      API      //
 
     void SetAPI(API api) {
-        _api = api;
+        g_api = api;
     }
 
     const API& GetAPI() {
-        return _api;
+        return g_api;
     }
 
     // Window
     GLFWwindow* GetWindowPointer() {
-        return _window;
+        return g_window;
     }
 
     void SetWindowPointer(GLFWwindow* window) {
-        _window = window;
-    }
-
-    void CreateGLFWWindow(const WindowedMode& windowedMode) {
-        if (windowedMode == WindowedMode::WINDOWED) {
-            _currentWindowWidth = _windowedWidth;
-            _currentWindowHeight = _windowedHeight;
-            _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "Unloved", NULL, NULL);
-            glfwSetWindowPos(_window, 0, 0);
-        }
-        else if (windowedMode == WindowedMode::FULLSCREEN) {
-            _currentWindowWidth = _fullscreenWidth;
-            _currentWindowHeight = _fullscreenHeight;
-            _window = glfwCreateWindow(_fullscreenWidth, _fullscreenHeight, "Unloved", _monitor, NULL);
-        }
-        _windowedMode = windowedMode;
+        g_window = window;
     }
 
     void SetWindowedMode(const WindowedMode& windowedMode) {
         if (windowedMode == WindowedMode::WINDOWED) {
-            _currentWindowWidth = _windowedWidth;
-            _currentWindowHeight = _windowedHeight;
-            glfwSetWindowMonitor(_window, nullptr, 0, 0, _windowedWidth, _windowedHeight, _mode->refreshRate);
-            glfwSetWindowPos(_window, 0, 0);
+            g_currentWindowWidth = g_windowedWidth;
+            g_currentWindowHeight = g_windowedHeight;
+            glfwSetWindowMonitor(g_window, nullptr, 0, 0, g_windowedWidth, g_windowedHeight, g_mode->refreshRate);
+            glfwSetWindowPos(g_window, 0, 0);
         }
         else if (windowedMode == WindowedMode::FULLSCREEN) {
-            _currentWindowWidth = _fullscreenWidth;
-            _currentWindowHeight = _fullscreenHeight;
-            glfwSetWindowMonitor(_window, _monitor, 0, 0, _fullscreenWidth, _fullscreenHeight, _mode->refreshRate);
+            g_currentWindowWidth = g_fullscreenWidth;
+            g_currentWindowHeight = g_fullscreenHeight;
+            glfwSetWindowMonitor(g_window, nullptr, 0, 0, g_fullscreenWidth - 1, g_fullscreenHeight - 1, g_mode->refreshRate);
         }
-        _windowedMode = windowedMode;
+        g_windowedMode = windowedMode;
     }
 
     void ToggleFullscreen() {
-        if (_windowedMode == WindowedMode::WINDOWED) {
+        if (g_windowedMode == WindowedMode::WINDOWED) {
             SetWindowedMode(WindowedMode::FULLSCREEN);
         }
         else {
@@ -183,54 +192,54 @@ namespace BackEnd {
     }
 
     void ForceCloseWindow() {
-        _forceCloseWindow = true;
+        g_forceCloseWindow = true;
     }
 
     bool WindowHasFocus() {
-        return _windowHasFocus;
+        return g_windowHasFocus;
     }
 
     bool WindowHasNotBeenForceClosed() {
-        return !_forceCloseWindow;
+        return !g_forceCloseWindow;
     }
 
     int GetWindowedWidth() {
-        return _windowedWidth;
+        return g_windowedWidth;
     }
 
     int GetWindowedHeight() {
-        return _windowedHeight;
+        return g_windowedHeight;
     }
 
     int GetFullScreenWidth() {
-        return _fullscreenWidth;
+        return g_fullscreenWidth;
     }
 
     int GetFullScreenHeight() {
-        return _fullscreenHeight;
+        return g_fullscreenHeight;
     }
 
     int GetCurrentWindowWidth() {
-        return _currentWindowWidth;
+        return g_currentWindowWidth;
     }
 
     int GetCurrentWindowHeight() {
-        return _currentWindowHeight;
+        return g_currentWindowHeight;
     }
 
     bool WindowIsOpen() {
-        return !(glfwWindowShouldClose(_window) || _forceCloseWindow);
+        return !(glfwWindowShouldClose(g_window) || g_forceCloseWindow);
     }
 
     bool WindowIsMinimized() {
         int width = 0;
         int height = 0;
-        glfwGetFramebufferSize(_window, &width, &height);
+        glfwGetFramebufferSize(g_window, &width, &height);
         return (width == 0 || height == 0);
     }
 
     const WindowedMode& GetWindowMode() {
-        return _windowedMode;
+        return g_windowedMode;
     }
 
     //////////////////////////////
@@ -238,8 +247,8 @@ namespace BackEnd {
     //      Render Targets      //
 
     void SetPresentTargetSize(int width, int height) {
-        _presentTargetWidth = width;
-        _presentTargetHeight = height;
+        g_presentTargetWidth = width;
+        g_presentTargetHeight = height;
         if (GetAPI() == API::OPENGL) {
             //OpenGLBackEnd::SetPresentTargetSize(width, height);
         }
@@ -249,11 +258,11 @@ namespace BackEnd {
     }
 
     int GetPresentTargetWidth() {
-        return _presentTargetWidth;
+        return g_presentTargetWidth;
     }
 
     int GetPresentTargetHeight() {
-        return _presentTargetHeight;
+        return g_presentTargetHeight;
     }
 
 
@@ -269,10 +278,10 @@ namespace BackEnd {
 
     void window_focus_callback(GLFWwindow* /*window*/, int focused) {
         if (focused) {
-            BackEnd::_windowHasFocus = true;
+            BackEnd::g_windowHasFocus = true;
         }
         else {
-            BackEnd::_windowHasFocus = false;
+            BackEnd::g_windowHasFocus = false;
         }
     }
 }

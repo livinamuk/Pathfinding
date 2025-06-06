@@ -7,7 +7,7 @@
 
 void Engine::Run() {
 
-    BackEnd::Init(API::OPENGL);
+    BackEnd::Init(API::OPENGL, WindowedMode::WINDOWED);
 
     while (BackEnd::WindowIsOpen()) {
 

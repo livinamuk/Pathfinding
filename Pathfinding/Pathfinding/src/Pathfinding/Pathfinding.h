@@ -19,7 +19,7 @@ namespace Pathfinding {
     void SetTarget(int x, int y);
     void SetObstacle(int x, int y, bool value);
     bool IsInBounds(int x, int y);
-    bool IsObstacle(int x, int y);
+    bool IsCellObstacle(int x, int y);
     bool HasLineOfSight(glm::vec2 startPosition, glm::vec2 endPosition);
     int GetMouseX();
     int GetMouseY();

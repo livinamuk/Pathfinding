@@ -4,7 +4,7 @@
 namespace BackEnd {
 
     // Core
-    void Init(API api);
+    void Init(API api, WindowedMode windowedMode);
     void BeginFrame();
     void UpdateSubSystems();
     void EndFrame();
@@ -18,7 +18,6 @@ namespace BackEnd {
     GLFWwindow* GetWindowPointer();
     const WindowedMode& GetWindowMode();
     void SetWindowPointer(GLFWwindow* window);
-    void CreateGLFWWindow(const WindowedMode& windowedMode);
     void SetWindowedMode(const WindowedMode& windowedMode);
     void ToggleFullscreen();
     void ForceCloseWindow();

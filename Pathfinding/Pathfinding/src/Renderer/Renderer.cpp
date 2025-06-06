@@ -87,7 +87,7 @@ std::vector<RenderItem2D> CreateRenderItems2D(ivec2 presentSize) {
         for (int y = 0; y < Pathfinding::GetMapHeight(); y++) {
             ivec2 drawLocation = ivec2(x * CELL_SIZE, PRESENT_HEIGHT - y * CELL_SIZE);
 
-            if (Pathfinding::IsObstacle(x, y)) {
+            if (Pathfinding::IsCellObstacle(x, y)) {
                 renderItems.push_back(RendererUtil::CreateRenderItem2D("tile_wall", drawLocation, viewportSize, TOP_LEFT));
             }
             else {
@@ -107,17 +107,15 @@ std::vector<RenderItem2D> CreateRenderItems2D(ivec2 presentSize) {
             renderItems.push_back(CreateColoredTile(x, y, RED));
         }
     }
+
+    // Open list
     MinHeap& openList = aStar.GetOpenList();
-    for (Cell* cell : openList.items) {
-        //renderItems.push_back(CreateColoredTile(cell->x, cell->y, GREEN));
-    }
-    //for (int i = 0; i < aStar.GetOpenList().Size(); i++) {
-    //    std::cout << 
-    //}
     for (int i = 0; i < aStar.GetOpenList().GetItemCount(); i++) {
         auto& cell = aStar.GetOpenList().items[i];
         renderItems.push_back(CreateColoredTile(cell->x, cell->y, GREEN));
     }
+
+    // Render final path
     for (auto& cell : aStar.GetPath()) {
         renderItems.push_back(CreateColoredTile(cell->x, cell->y, BLUE));
     }

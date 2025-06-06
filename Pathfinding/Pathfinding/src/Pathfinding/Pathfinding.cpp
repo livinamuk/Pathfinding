@@ -73,14 +73,25 @@ namespace Pathfinding {
         if (Input::KeyPressed(HELL_KEY_SPACE)) {
             Audio::PlayAudio("SELECT.wav", 1.0);
         }
-        if (Input::KeyDown(HELL_KEY_SPACE) && !g_AStar.GridPathFound()) {
+        if ((Input::KeyDown(HELL_KEY_SPACE) || Input::KeyPressed(HELL_KEY_Q)) && !g_AStar.GridPathFound()) {
             Audio::PlayAudio("UI_Select.wav", 0.5);
-            Timer timer("Find path");
-            if (!g_AStar.SearchInitilized()) {
-                g_AStar.InitSearch(g_start.x, g_start.y, g_target.x, g_target.y);
+
+            // Slow mode
+            if (SlowModeEnabled()) {
+                if (!g_AStar.SearchInitilized()) {
+                    g_AStar.InitSearch(g_start.x, g_start.y, g_target.x, g_target.y);
+                }
+                if (!g_AStar.GridPathFound()) {
+                    g_AStar.FindPath();
+                }
             }
-            if (!g_AStar.GridPathFound()) {
-                g_AStar.FindPath();
+            // Fast mode
+            else {
+                for (int i = 0; i < 100; i++) {
+                    g_AStar.InitSearch(g_start.x, g_start.y, g_target.x, g_target.y);
+                    Timer timer("FindPath()");
+                    g_AStar.FindPath();
+                }
             }
         }
         if (Input::KeyPressed(HELL_KEY_W) || Input::KeyPressed(HELL_KEY_A)) {
@@ -96,8 +107,8 @@ namespace Pathfinding {
     }
 
     void ClearMap() {
-        for (int y = 0; y < GetMapWidth(); ++y) {
-            for (int x = 0; x < GetMapHeight(); ++x) {
+        for (int y = 0; y < GetMapHeight(); ++y) {
+            for (int x = 0; x < GetMapWidth(); ++x) {
                 int idx = Index1D(x, y);
                 g_map[idx] = 0;
             }
@@ -108,26 +119,44 @@ namespace Pathfinding {
 
     void LoadMap() {
         ClearMap();
+
         std::string fullPath = "res/maps/mappp.txt";
-        if (Util::FileExists(fullPath)) {
-            std::cout << "Loading map '" << fullPath << "'\n";
-            std::ifstream file(fullPath);
-            std::stringstream buffer;
-            buffer << file.rdbuf();
-            if (buffer) {
-                nlohmann::json data = nlohmann::json::parse(buffer.str());
-                for (const auto& jsonObject : data["map"]) {
-                    int x = jsonObject["position"]["x"];
-                    int y = jsonObject["position"]["y"];
-                    SetObstacle(x, y, true);
-                }
-                g_start.x = data["start"]["x"];
-                g_start.y = data["start"]["y"];
-                g_target.x = data["target"]["x"];
-                g_target.y = data["target"]["y"];
+
+        // Confirm the file actually opens
+        std::ifstream file(fullPath, std::ios::binary);
+        if (!file.is_open()) {
+            std::cerr << "Failed to open '" << fullPath << "'\n";
+            return;
+        }
+
+        file.seekg(0, std::ios::end);
+        size_t size = file.tellg();
+        file.seekg(0, std::ios::beg);
+        std::string fileContents(size, '\0');
+        file.read(&fileContents[0], size);
+
+        if (file.gcount() != static_cast<std::streamsize>(size)) {
+            std::cerr << "Read incomplete: got " << file.gcount() << " of " << size << "\n";
+            return;
+        }
+        // Parse
+        try {
+            nlohmann::json data = nlohmann::json::parse(fileContents);
+            for (const auto& jsonObject : data["map"]) {
+                int x = jsonObject["position"]["x"];
+                int y = jsonObject["position"]["y"];
+                SetObstacle(x, y, true);
             }
+            g_start.x = data["start"]["x"];
+            g_start.y = data["start"]["y"];
+            g_target.x = data["target"]["x"];
+            g_target.y = data["target"]["y"];
+        }
+        catch (const nlohmann::json::parse_error& e) {
+            std::cerr << "JSON parse error at byte " << e.byte << ": " << e.what() << "\n";
         }
     }
+
 
     void SaveMap() {
         JSONObject saveFile;
@@ -135,7 +164,7 @@ namespace Pathfinding {
         nlohmann::json jsonMap = nlohmann::json::array();
         for (int x = 0; x < GetMapWidth(); x++) {
             for (int y = 0; y < GetMapHeight(); y++) {
-                if (IsObstacle(x, y)) {
+                if (IsCellObstacle(x, y)) {
                     nlohmann::json jsonObject;
                     jsonObject["position"] = { {"x", x}, {"y", y} };
                     jsonMap.push_back(jsonObject);
@@ -176,7 +205,7 @@ namespace Pathfinding {
         }
     }
 
-    bool IsObstacle(int x, int y) {
+    bool IsCellObstacle(int x, int y) {
         if (IsInBounds(x, y)) {
             return g_map[Index1D(x, y)];
         }
@@ -242,7 +271,7 @@ namespace Pathfinding {
         float currentDistance = distanceToEnd;
         while (currentDistance > 1) {
             testPosition += direction * stepSize;
-            if (Pathfinding::IsObstacle((int)testPosition.x, (int)testPosition.y)) {
+            if (Pathfinding::IsCellObstacle((int)testPosition.x, (int)testPosition.y)) {
                 return false;
             }
             currentDistance = glm::distance(testPosition, endPosition);
